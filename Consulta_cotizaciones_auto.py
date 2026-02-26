@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from datetime import date, timedelta, datetime
 from pathlib import Path
 import os
-import json
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 import openpyxl
@@ -14,6 +13,9 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- CONFIGURACIÓN DE CONSTANTES Y CONEXIÓN ---
+# ¡IMPORTANTE! Reemplaza esta ruta con la ubicación real donde quieres tu Excel
+EXCEL_FILE_PATH = r"C:\Mis documentos\Cotizaciones y datos macro.xlsx"
+
 URL = "https://portalerrepar.errepar.com/CotizacionDolarPage"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -81,20 +83,8 @@ POST_HEADERS.update({
 def log(msg, level="INFO"):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] [{level}] {msg}")
 
-def cargar_config():
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
-
-def guardar_config(config):
-    with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-        json.dump(config, f, indent=4)
-
 def _excel_path() -> Path:
-    config = cargar_config()
-    ruta = config.get('excel_path', '')
-    return Path(ruta)
+    return Path(EXCEL_FILE_PATH)
 
 def is_file_locked(filepath: Path) -> bool:
     if not filepath.exists():
@@ -518,60 +508,30 @@ def post_process_and_fill_sheet(sheet_name: str, key_column: str, hoy: date) -> 
         log(f"Error Post-Proceso '{sheet_name}': {e}", "ERROR")
         return False
 
-# --- CONFIGURACIÓN INICIAL POR CONSOLA ---
-
-def configuracion_inicial():
-    print("="*50)
-    print("  CONFIGURACIÓN INICIAL DEL ACTUALIZADOR")
-    print("="*50)
-    print("No se ha detectado el archivo config.json o la ruta del Excel.")
-    ruta = input("Por favor, ingrese la ruta completa del archivo Excel (.xlsx): ").strip()
-    
-    if not ruta:
-        print("La ruta no puede estar vacía. Cerrando...")
-        return False
-        
-    ruta_obj = Path(ruta)
-    
-    if not ruta.endswith('.xlsx'):
-        print("[ERROR] El archivo debe tener extensión .xlsx")
-        return False
-        
-    if not ruta_obj.exists():
-        respuesta = input("El archivo no existe. ¿Desea crearlo ahora? (s/n): ").lower()
-        if respuesta == 's':
-            try:
-                if not ruta_obj.parent.exists():
-                    os.makedirs(ruta_obj.parent, exist_ok=True)
-                wb = openpyxl.Workbook()
-                wb.save(ruta_obj)
-                print(f"[EXITO] Archivo {ruta_obj.name} creado correctamente.")
-            except Exception as e:
-                print(f"[ERROR] No se pudo crear el archivo: {e}")
-                return False
-        else:
-            print("Operación cancelada.")
-            return False
-
-    config = cargar_config()
-    config['excel_path'] = str(ruta_obj)
-    guardar_config(config)
-    print("[EXITO] Ruta guardada en config.json correctamente.\n")
-    return True
-
 # --- PROCESO PRINCIPAL ---
 
 def main():
-    config = cargar_config()
-    if 'excel_path' not in config:
-        if not configuracion_inicial():
-            return
-            
     print("\n" + "="*50)
     log("Iniciando proceso de actualización de datos...")
     
     ruta_excel = _excel_path()
     
+    # Verificar que la carpeta destino exista
+    if not ruta_excel.parent.exists():
+        log(f"La carpeta de destino no existe: {ruta_excel.parent}", "ERROR")
+        log("Por favor, crea la carpeta o corrige EXCEL_FILE_PATH en el script.", "ERROR")
+        return
+
+    # Si el archivo no existe en la carpeta, lo creamos
+    if not ruta_excel.exists():
+        log(f"El archivo no existe. Creando nuevo archivo en: {ruta_excel.name}", "INFO")
+        try:
+            wb = openpyxl.Workbook()
+            wb.save(ruta_excel)
+        except Exception as e:
+            log(f"No se pudo crear el archivo: {e}", "ERROR")
+            return
+
     # 0. VERIFICAR QUE EL ARCHIVO NO ESTÉ BLOQUEADO/ABIERTO
     if is_file_locked(ruta_excel):
         log("El archivo Excel se encuentra abierto o bloqueado por otro programa. Por favor, ciérralo y vuelve a intentarlo.", "ERROR")
@@ -640,4 +600,7 @@ def main():
     print("="*50 + "\n")
 
 if __name__ == "__main__":
+    main()
+if __name__ == "__main__":
+
     main()

@@ -35,7 +35,7 @@ pip install requests pandas beautifulsoup4 openpyxl urllib3
 
 
 Configuración de la Ruta del Excel:
-Abre el archivo actualizador.py con cualquier editor de texto (como el Bloc de notas o VS Code) y busca la variable EXCEL_FILE_PATH en la parte superior. Modifícala con la ruta exacta donde deseas que se guarde o actualice tu planilla de Excel.
+Abre el archivo Consulta_cotizaciones_auto.py con cualquier editor de texto (como el Bloc de notas o VS Code) y busca la variable EXCEL_FILE_PATH en la parte superior. Modifícala con la ruta exacta donde deseas que se guarde o actualice tu planilla de Excel.
 
 Ejemplo:
 

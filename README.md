@@ -37,7 +37,7 @@ pip install requests pandas beautifulsoup4 openpyxl urllib3
 Primera Ejecución (Configuración):
 Haz doble clic en el archivo ejecutar_actualizador.bat o ejecuta en consola:
 
-python actualizador.py
+python Consulta_cotizaciones_auto.py
 
 
 La primera vez que lo corras, la consola te pedirá que escribas la ruta absoluta de dónde quieres guardar o actualizar tu Excel. Si el archivo no existe, te ofrecerá crearlo.

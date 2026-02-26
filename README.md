@@ -34,13 +34,21 @@ Abre tu terminal o símbolo del sistema e instala las librerías:
 pip install requests pandas beautifulsoup4 openpyxl urllib3
 
 
-Primera Ejecución (Configuración):
+Configuración de la Ruta del Excel:
+Abre el archivo actualizador.py con cualquier editor de texto (como el Bloc de notas o VS Code) y busca la variable EXCEL_FILE_PATH en la parte superior. Modifícala con la ruta exacta donde deseas que se guarde o actualice tu planilla de Excel.
+
+Ejemplo:
+
+EXCEL_FILE_PATH = r"C:\Mis documentos\Cotizaciones y datos macro.xlsx"
+
+
+Prueba Manual:
 Haz doble clic en el archivo ejecutar_actualizador.bat o ejecuta en consola:
 
 python Consulta_cotizaciones_auto.py
 
 
-La primera vez que lo corras, la consola te pedirá que escribas la ruta absoluta de dónde quieres guardar o actualizar tu Excel. Si el archivo no existe, te ofrecerá crearlo.
+Si el archivo Excel no existe en la ruta que especificaste, el script creará uno nuevo automáticamente, siempre y cuando la carpeta contenedora exista.
 
 ⏰ Configurar Actualización Automática cada 24hs (Windows)
 
@@ -62,4 +70,4 @@ Iniciar en (Opcional pero Recomendado): Pega la ruta de la carpeta donde está g
 
 Haz clic en Finalizar.
 
-¡Listo! Tu computadora abrirá el script automáticamente cada día, descargará los datos y actualizará el Excel de forma autónoma. Si por casualidad tienes el Excel abierto en ese momento, el script lo detectará, te avisará en la consola y se cerrará por seguridad.
+¡Listo! Tu computadora abrirá el script automáticamente cada día a la hora fijada, descargará los datos y actualizará el Excel de forma autónoma. Si por casualidad tienes el Excel abierto en ese momento, el script lo detectará, te avisará en la consola y se cerrará por seguridad.
